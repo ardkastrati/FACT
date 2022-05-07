@@ -10,10 +10,19 @@ import concurrent.futures
 from timer         import start_timer
 from exit_scope    import close_when_done
 from setup_logging import setup_logging
-from sql_synthetic_generator import generate_synthetic, generate_synthetic_trigonometric, generate_synthetic_exponential
+from sql_synthetic_generator import generate_synthetic_polynomial, 
+                                    generate_synthetic_trigonometric, 
+                                    generate_synthetic_exponential, 
+                                    generate_synthetic_modulo,
+                                    generate_synthetic_prime, 
+                                    generate_synthetic_periodic,
+                                    generate_synthetic_finite,
+                                    generate_synthetic_group
+
+dataset_type = 'exponential' # Can be polynomial, trigonometric, exponential, modulo, prime, periodic, finite, group
+
 
 logger = logging.getLogger(__name__)
-
 def create_database_schema(dbconn):
     """Ensure that the 'oeis_entries' table is present in the database."""
 
@@ -51,7 +60,25 @@ def process_synthetic_entry(counter):
     import math
     length = int(math.log2(counter//20 + 2))
     print(length)
-    entry = generate_synthetic_exponential(counter, length)
+    entry = None
+    if dataset_type == "polynomial":
+        entry = generate_synthetic_polynomial(counter, length)
+    elif dataset_type == "trigonometric":
+        entry = generate_synthetic_trigonometric(counter, length)
+    elif dataset_type == "exponential":
+        entry = generate_synthetic_exponential(counter, length)
+    elif dataset_type == "modulo":
+        entry = generate_synthetic_modulo(counter, length)
+    elif dataset_type == "prime":
+        entry = generate_synthetic_prime(counter, length)
+    elif dataset_type == "periodic":
+        entry = generate_synthetic_periodic(counter, length)
+    elif dataset_type == "finite":
+        entry = generate_synthetic_finite(counter, length)
+    elif dataset_type == "group":
+        entry = generate_synthetic_group(counter, length)
+    else:
+        raise Exception("Dataset type: " + dataset_type + " is not supported")
     return entry
 
 
@@ -71,7 +98,8 @@ def process_database_entries(database_filename_in):
 
     # ========== fetch and process database entries, ordered by oeis_id.
 
-    BATCH_SIZE = 5 # a small hack
+    BATCH_SIZE = 1000 
+    print("TEEEEST")
     #g = generate_synthetic_exponential()
     counter = 0
     with start_timer() as timer:
@@ -85,9 +113,6 @@ def process_database_entries(database_filename_in):
                     #dbcursor_in.execute("SELECT oeis_id, main_content, bfile_content FROM oeis_entries ORDER BY oeis_id;")
 
                     while counter < 500000:
-                        #oeis_entries = [next(g) for i in range(BATCH_SIZE)]
-                        #if oeis_entries[0] == "END":
-                        #    break
                         
                         logger.log(logging.PROGRESS, "Processing OEIS entries B{:06} to B{:06} ...".format(counter, counter + BATCH_SIZE))
 

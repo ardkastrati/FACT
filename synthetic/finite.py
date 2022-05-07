@@ -1,12 +1,13 @@
 from synthetic.generate import Generator
+from random import randrange
 
 class Finite():
     terminals = []
     non_terminals = []
 
-    def __init__(self, arg1=None, final=10):
+    def __init__(self, arg1=None, final=None):
         self.arg1 = arg1
-        self.final = final
+        self.final = randrange(1,500) if final is None else final
 
     def finish(self, generator):
         self.arg1 = generator.generate(terminals=Finite.terminals, non_terminals=Finite.non_terminals, current=self.arg1)
@@ -29,4 +30,4 @@ class Finite():
         return 'finite(' + self.arg1.to_string() + ', ' + str(self.final) + ')'
 
     def get_length(self):
-        return self.arg1.get_length() + 3
+        return self.arg1.get_length() + 3 + len(str(self.final))

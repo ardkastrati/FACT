@@ -133,9 +133,10 @@ Pow.non_terminals_exponent = non_terminals
 Periodic.terminals = terminals
 Periodic.non_terminals = non_terminals
 g = Generator(length=10)
-periodic = g.generate(terminals=terminals, non_terminals=non_terminals)
+periodic = g.generate(terminals=terminals, non_terminals=[Periodic()])
 print('Length: ', periodic.get_length())
 print(periodic.to_string())
+print([periodic.evaluate(i) for i in range(100)])
 
 #### Finite
 #------- SET CONTEXT-FREE GRAMMAR -------#
@@ -154,8 +155,9 @@ Pow.non_terminals_exponent = non_terminals
 Finite.terminals = terminals
 Finite.non_terminals = non_terminals
 g = Generator(length=10)
-finite = g.generate(terminals=terminals, non_terminals=non_terminals)
+finite = g.generate(terminals=terminals, non_terminals=[Finite()])
 print('Length: ', finite.get_length())
 print(finite.to_string())
+print([finite.evaluate(i) for i in range(100)])
 
 #print([eval('exec("import math") or (x + 52 + int(math.cos(math.pi/2 * (689098))))**5', {"x":x}) for x in range(10)])

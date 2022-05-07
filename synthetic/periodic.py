@@ -1,13 +1,14 @@
 from synthetic.generate import Generator
+from random import randrange
 import sys
 
 class Periodic():
     terminals = []
     non_terminals = []
 
-    def __init__(self, arg1=None, periodicity=10):
+    def __init__(self, arg1=None, periodicity=None):
         self.arg1 = arg1
-        self.periodicity = periodicity
+        self.periodicity = randrange(1,250) if periodicity is None else periodicity
 
     def finish(self, generator):
         self.arg1 = generator.generate(terminals=Periodic.terminals, non_terminals=Periodic.non_terminals, current=self.arg1)
@@ -28,4 +29,4 @@ class Periodic():
         return 'periodic(' + self.arg1.to_string() + ', ' + str(self.periodicity) + ')'
 
     def get_length(self):
-        return self.arg1.get_length() + 3
+        return self.arg1.get_length() + 3 + len(str(self.periodicity))
